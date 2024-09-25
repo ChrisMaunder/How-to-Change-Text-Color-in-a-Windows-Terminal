@@ -2,8 +2,6 @@
 
 A quick overview and a simple Windows CMD script to make your terminal output a little more lively
 
-- [Download source code - 1.9 KB](https://raw.githubusercontent.com/ChrisMaunder/How-to-Change-Text-Color-in-a-Windows-Terminal/master/docs/assets/color.zip)
-
 ## Introduction
 
 The default text output to a terminal is monochromatic and doesn't provide a simple method to provide context. For instance, you may want an error to appear in red, success in green, or important info to be output in bold.
@@ -20,7 +18,7 @@ To output colored text, you need to `echo `the control characters for the requir
 
 
 | Color | Foreground | Background |
-| --- | --- | --- |
+|:--- | --- | --- |
 | Default | **ESC**[39m | **ESC**[49m |
 | Black | **ESC**[30m | **ESC**[40m |
 | Dark red | **ESC**[31m | **ESC**[41m |
@@ -43,13 +41,13 @@ and the reset code is **ESC**[0m where **ESC** is the escape code.
 
 The format of the string for foreground color is:
 
-```cpp
+```cmd
 "ESC[" + "<0 or 1, meaning normal or bold>;" + "<color code> + "m"
 ```
 
 and for background:
 
-```cpp
+```cmd
 "ESC[" + "<color code>" + "m"
 ```
 
@@ -59,7 +57,7 @@ These codes can be output together in order to change fore- and back-ground colo
 
 Before you can output the color code, you need to generate the **ESC** sequence. It's probably easiest to do that once and store it for later:
 
-```cpp
+```cmd
 :: Sets up the ESC string for use later in this script
 :setESC
     for /F "tokens=1,2 delims=#" %%a in ('"prompt #$H#$E# & echo on & for %%b in (1) do rem"') do (
@@ -73,7 +71,7 @@ This will set a variable `ESC` with the correct sequence.
 
 A simple example of outputting red text:
 
-```cpp
+```cmd
 setlocal enabledelayedexpansion
 call :setESC
 echo !ESC![91mThis is red text!ESC![0m
@@ -81,7 +79,7 @@ echo !ESC![91mThis is red text!ESC![0m
 
 An example of outputting red text on a white background:
 
-```cpp
+```cmd
 setlocal enabledelayedexpansion
 call :setESC
 echo !ESC![91m!ESC![107mThis is red text on a white background!ESC![0m"
@@ -93,14 +91,14 @@ This is a little cumbersome so I've created some simple subroutines that provide
 
 The following helper functions allow you to do stuff like:
 
-```cpp
+```cmd
 call :WriteLine "This is red text" "Red"
 call :WriteLine "This is red text on a white background" "Red" "White"
 ```
 
 Much easier.
 
-```cpp
+```cmd
 REM  Set to false if you find your environment just doesn't handle colors well
 set useColor=true
 
@@ -243,7 +241,7 @@ set useColor=true
 
 Suppose we have defined a set of predefined colors and we want to use them to ensure consistency:
 
-```cpp
+```cmd
 set color_primary=Blue
 set color_mute=Gray
 set color_info=Yellow
@@ -254,7 +252,7 @@ set color_error=Red
 
 If we output text using these as background colors, we get:
 
-```cpp
+```cmd
 call :WriteLine
 call :WriteLine "Default color on predefined background"
 call :WriteLine
@@ -272,7 +270,7 @@ call :WriteLine "  Error colored background"   "Default" %color_error%
 
 Things are a bit murky so let's add one more function that will provide a contrasting foreground on whatever background we choose.
 
-```cpp
+```cmd
 :: Sets the name of a color that will providing a contrasting foreground
 :: color for the given background color.
 ::
@@ -308,7 +306,7 @@ We've already wired this up in the `Write` methods: If the foreground color is s
 
 To use, we simply do:
 
-```cpp
+```cmd
 call :WriteLine "  Primary colored background" "Contrast" %color_primary%
 call :WriteLine "  Mute colored background"    "Contrast" %color_mute%
 call :WriteLine "  Info colored background"    "Contrast" %color_info%
